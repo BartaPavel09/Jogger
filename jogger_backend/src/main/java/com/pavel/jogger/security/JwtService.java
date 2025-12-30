@@ -1,10 +1,10 @@
 package com.pavel.jogger.security;
 
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,6 +17,9 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
+    /**
+     * @param secret
+     */
     public JwtService(@Value("${app.jwt.secret}") String secret) {
 
         SecretKey key = new SecretKeySpec(
@@ -34,6 +37,11 @@ public class JwtService {
                 .build();
     }
 
+    /**
+     * @param username
+     * @param role
+     * @return
+     */
     public String generateToken(String username, String role) {
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -50,6 +58,10 @@ public class JwtService {
         ).getTokenValue();
     }
 
+    /**
+     * @param token
+     * @return
+     */
     public Jwt decode(String token) {
         return jwtDecoder.decode(token);
     }

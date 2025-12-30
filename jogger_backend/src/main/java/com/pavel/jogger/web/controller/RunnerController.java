@@ -1,6 +1,5 @@
 package com.pavel.jogger.web.controller;
 
-import com.pavel.jogger.persistence.entity.RunnerEntity;
 import com.pavel.jogger.persistence.mapper.RunnerMapper;
 import com.pavel.jogger.service.AccessService;
 import com.pavel.jogger.service.RunnerService;

@@ -1,6 +1,7 @@
 package com.pavel.jogger.persistence.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity

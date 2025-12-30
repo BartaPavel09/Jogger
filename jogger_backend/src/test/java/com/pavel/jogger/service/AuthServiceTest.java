@@ -5,11 +5,10 @@ import com.pavel.jogger.persistence.repository.RunnerRepository;
 import com.pavel.jogger.security.JwtService;
 import com.pavel.jogger.web.dto.auth.RegisterRequest;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class AuthServiceTest {

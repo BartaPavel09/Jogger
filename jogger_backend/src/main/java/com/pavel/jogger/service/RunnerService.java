@@ -6,8 +6,8 @@ import com.pavel.jogger.web.exception.ConflictException;
 import com.pavel.jogger.web.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RunnerService {

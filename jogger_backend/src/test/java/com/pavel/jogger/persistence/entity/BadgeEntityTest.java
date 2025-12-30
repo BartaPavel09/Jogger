@@ -1,7 +1,9 @@
 package com.pavel.jogger.persistence.entity;
 
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BadgeEntityTest {

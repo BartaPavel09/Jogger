@@ -4,11 +4,11 @@ import com.pavel.jogger.service.AuthService;
 import com.pavel.jogger.web.dto.auth.AuthResponse;
 import com.pavel.jogger.web.dto.auth.LoginRequest;
 import com.pavel.jogger.web.dto.auth.RegisterRequest;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")

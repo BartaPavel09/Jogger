@@ -5,6 +5,7 @@ void main() {
   runApp(const JoggerApp());
 }
 
+// The main application widget for Jogger.
 class JoggerApp extends StatelessWidget {
   const JoggerApp({super.key});
 
