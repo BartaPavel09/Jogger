@@ -1,0 +1,40 @@
+# --- macOS (Foarte Important) ---
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# --- IntelliJ / Editors ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# --- Java / Spring Boot (Backend) ---
+**/target/
+**/mvnw
+**/mvnw.cmd
+**/.mvn/
+**/help.md
+
+# --- Flutter (Frontend) ---
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/pubspec.lock
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Podfile.lock
+ios/Pods/
+
+# --- Logs & Misc ---
+*.log
+*.tmp
