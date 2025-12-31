@@ -14,6 +14,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Service class handling core authentication logic.
+ * <p>
+ * This class acts as the bridge between the API layer (Controllers) and the data/security layers.
+ * It handles user registration (saving new users safely) and user login (verifying credentials).
+ * </p>
+ */
 @Service
 public class AuthService {
 
@@ -22,6 +29,13 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    /**
+     * Constructor injection for required dependencies.
+     * @param runnerRepository      To access and save user data in the database.
+     * @param passwordEncoder       To hash passwords before saving them (security best practice).
+     * @param authenticationManager To verify username/password combinations during login.
+     * @param jwtService            To generate the JWT token upon successful auth.
+     */
     public AuthService(
             RunnerRepository runnerRepository,
             PasswordEncoder passwordEncoder,
@@ -34,6 +48,12 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
+    /**
+     * Registers a new user (Runner) in the system.
+     * @param req The registration request containing username, email, and raw password.
+     * @return A valid JWT token so the user is immediately logged in after registration.
+     * @throws ConflictException If the username or email is already taken.
+     */
     public String register(RegisterRequest req) {
 
         if (runnerRepository.existsByUsername(req.username)) {
@@ -55,6 +75,12 @@ public class AuthService {
         return jwtService.generateToken(runner.getUsername(), runner.getRole());
     }
 
+    /**
+     * Authenticates an existing user.
+     * @param req The login request containing username and raw password.
+     * @return A valid JWT token if credentials are correct.
+     * @throws org.springframework.security.core.AuthenticationException If login fails.
+     */
     public String login(LoginRequest req) {
 
         authenticationManager.authenticate(

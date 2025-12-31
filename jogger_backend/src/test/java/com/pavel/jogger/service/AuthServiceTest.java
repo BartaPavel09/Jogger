@@ -18,13 +18,12 @@ class AuthServiceTest {
     private final AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
     private final JwtService jwtService = mock(JwtService.class);
 
-    private final AuthService authService =
-            new AuthService(
-                    runnerRepository,
-                    passwordEncoder,
-                    authenticationManager,
-                    jwtService
-            );
+    private final AuthService authService = new AuthService(
+            runnerRepository,
+            passwordEncoder,
+            authenticationManager,
+            jwtService
+    );
 
     @Test
     void register_shouldCreateUserAndReturnToken() {

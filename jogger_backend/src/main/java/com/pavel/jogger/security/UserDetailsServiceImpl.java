@@ -11,6 +11,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Custom implementation of Spring Security's UserDetailsService.
+ * <p>
+ * This service is used automatically by the AuthenticationManager during the login process.
+ * Its sole purpose is to bridge the gap between the database (RunnerEntity) and
+ * Spring Security's internal user representation (UserDetails).
+ * </p>
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -20,6 +28,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.runnerRepository = runnerRepository;
     }
 
+    /**
+     * Loads a user by their username.
+     * <p>
+     * When authenticationManager.authenticate() is called in AuthService, Spring calls this method
+     * behind the scenes to find the user in the database.
+     * </p>
+     * @param username The username identifying the user whose data is required.
+     * @return A fully populated UserDetails object (contains username, password hash, roles).
+     * @throws UsernameNotFoundException If the user cannot be found in the database.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

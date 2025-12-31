@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class RunnerServiceTest {
@@ -19,8 +20,7 @@ class RunnerServiceTest {
     void getRunnerById_shouldReturnRunner() {
         RunnerEntity runner = new RunnerEntity("u", "e", "p");
 
-        when(runnerRepository.findById(1L))
-                .thenReturn(Optional.of(runner));
+        when(runnerRepository.findById(1L)).thenReturn(Optional.of(runner));
 
         Optional<RunnerEntity> result = runnerService.getRunnerById(1L);
 
@@ -32,16 +32,15 @@ class RunnerServiceTest {
     void updateRunner_shouldUpdateEmail() {
         RunnerEntity runner = new RunnerEntity("u", "old@test.com", "p");
 
-        when(runnerRepository.findById(1L))
-                .thenReturn(Optional.of(runner));
-        when(runnerRepository.existsByEmail("new@test.com"))
-                .thenReturn(false);
-        when(runnerRepository.save(any()))
-                .thenReturn(runner);
+        when(runnerRepository.findById(1L)).thenReturn(Optional.of(runner));
+        when(runnerRepository.existsByEmail("new@test.com")).thenReturn(false);
 
-        RunnerEntity updated = runnerService.updateRunner(1L, "new@test.com");
+        when(runnerRepository.save(any(RunnerEntity.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        RunnerEntity updated = runnerService.updateRunner(1L, "new@test.com", null);
 
         assertEquals("new@test.com", updated.getEmail());
+        verify(runnerRepository).save(runner);
     }
 
     @Test

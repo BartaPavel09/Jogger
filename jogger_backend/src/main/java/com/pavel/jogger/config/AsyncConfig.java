@@ -9,6 +9,16 @@ import java.util.concurrent.Executor;
 @Configuration
 public class AsyncConfig {
 
+    /**
+     * Creates a specific task executor for handling Badge-related operations.
+     * <p>
+     * When a method is annotated with @Async("badgeExecutor"), it will be executed
+     * using a thread from this specific pool. This isolates badge processing from
+     * other application parts.
+     * </p>
+     *
+     * @return The configured Executor specifically for badge tasks.
+     */
     @Bean(name = "badgeExecutor")
     public Executor badgeExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

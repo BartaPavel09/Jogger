@@ -4,6 +4,13 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+/**
+ * Entity class representing a jogging activity stored in the database.
+ * <p>
+ * This class maps directly to the "activities" table. It holds all the metrics
+ * recorded during a run (distance, duration, calories) and links them to the user who performed it.
+ * </p>
+ */
 @Entity
 @Table(name = "activities")
 public class ActivityEntity {
@@ -25,23 +32,33 @@ public class ActivityEntity {
 
     private int calories;
 
+    /**
+     * Relationship mapping: Multiple activities belong to one Runner.
+     * <p>
+     * - FetchType.LAZY: <br>
+     * - The runner data is not loaded from the DB unless explicitly requested. <br>
+     * - @JoinColumn: Defines the foreign key column "runner_id" in the "activities" table.
+     * </p>
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "runner_id", nullable = false)
     private RunnerEntity runner;
 
-    
+    public ActivityEntity() {}
 
-    public ActivityEntity() {
-        
-    }
-
+    /**
+     * Convenience constructor for creating a basic activity.
+     * @param distanceKm Distance in kilometers.
+     * @param durationSec Duration in seconds.
+     * @param date Date of the activity.
+     */
     public ActivityEntity(double distanceKm, int durationSec, LocalDate date) {
         this.distanceKm = distanceKm;
         this.durationSec = durationSec;
         this.date = date;
     }
 
-    
+    // Getters and Setters
 
     public Long getId() {
         return id;
