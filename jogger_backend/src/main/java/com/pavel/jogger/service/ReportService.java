@@ -11,6 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * Service responsible for generating binary document reports (PDFs).
+ * <p>
+ * It uses the Apache PDFBox library to draw text and graphics onto a PDF canvas programmatically,
+ * fetching data from the database to write the report.
+ * </p>
+ */
 @Service
 public class ReportService {
 
@@ -20,6 +27,12 @@ public class ReportService {
         this.activityRepository = activityRepository;
     }
 
+    /**
+     * Creates a simple one-page PDF summarizing the runner's progress.
+     * @param runnerId The ID of the runner.
+     * @return A byte array representing the PDF file content.
+     * @throws RuntimeException If the PDF creation fails.
+     */
     public byte[] generateProgressReport(Long runnerId) {
 
         Double totalKmObj = activityRepository.totalDistance(runnerId);

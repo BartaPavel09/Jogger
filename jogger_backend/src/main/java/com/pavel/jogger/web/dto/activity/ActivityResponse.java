@@ -2,6 +2,13 @@ package com.pavel.jogger.web.dto.activity;
 
 import java.time.LocalDate;
 
+/**
+ * DTO for sending activity data to the client.
+ * <p>
+ * This creates a clean contract with the frontend. Even if the database changes,
+ * this structure stays the same so the app doesn't break.
+ * </p>
+ */
 public class ActivityResponse {
 
     private Long id;

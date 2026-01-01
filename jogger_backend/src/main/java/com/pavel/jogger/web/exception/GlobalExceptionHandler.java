@@ -9,11 +9,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Centralized exception handler for the API.
+ * <p>
+ * Intercepts exceptions thrown by Controllers and converts them into
+ * the standard {@link ApiError} format (Status + Map of Errors).
+ * </p>
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     
     @ExceptionHandler(MethodArgumentNotValidException.class)
+
+    /**
+     * Handles validation errors (e.g. from @Valid annotations).
+     * <p>
+     * Extracts field-specific errors (e.g., "email" -> "invalid format")
+     * and puts them into the error map. This allows the UI to highlight exactly
+     * which input fields are wrong.
+     * </p>
+     */
     public ResponseEntity<ApiError> handleValidationException(
             MethodArgumentNotValidException ex
     ) {
@@ -33,7 +49,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }
 
-    
+    /**
+     * Handles Not Found resources (404).
+     * Wraps the simple message in a map with key "message".
+     */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiError> handleNotFound(NotFoundException ex) {
         return new ResponseEntity<>(
@@ -42,7 +61,9 @@ public class GlobalExceptionHandler {
         );
     }
 
-    
+    /**
+     * Handles Access Denied (403).
+     */
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiError> handleForbidden(ForbiddenException ex) {
         return new ResponseEntity<>(
@@ -51,7 +72,10 @@ public class GlobalExceptionHandler {
         );
     }
 
-    
+    /**
+     * Handles Data Conflicts (409).
+     * e.g., Duplicate email.
+     */
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiError> handleConflict(ConflictException ex) {
         return new ResponseEntity<>(
@@ -60,7 +84,9 @@ public class GlobalExceptionHandler {
         );
     }
 
-    
+    /**
+     * Handles Bad Requests (400) for illegal arguments.
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex) {
         return new ResponseEntity<>(

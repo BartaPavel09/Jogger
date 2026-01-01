@@ -6,6 +6,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity representing a registered user (Runner) in the database.
+ * This class maps to the "runners" table.
+ * It serves as the root entity for the application.
+ */
 @Entity
 @Table(name = "runners")
 public class RunnerEntity {
@@ -32,6 +37,13 @@ public class RunnerEntity {
     @Column(nullable = true)
     private Double weight;
 
+    /**
+     * One-to-Many relationship with Activities.
+     * <p>
+     * <code>cascade = CascadeType.ALL</code>: If a Runner is deleted, all their activities are automatically deleted.
+     * <code>orphanRemoval = true</code>: If an activity is removed from this list, it is deleted from the database.
+     * </p>
+     */
     @OneToMany(
             mappedBy = "runner",
             cascade = CascadeType.ALL,
@@ -39,6 +51,10 @@ public class RunnerEntity {
     )
     private List<ActivityEntity> activities = new ArrayList<>();
 
+    /**
+     * One-to-Many relationship with Badges.
+     * Similar cascade rules apply: deleting the user deletes their earned badges.
+     */
     @OneToMany(
             mappedBy = "runner",
             cascade = CascadeType.ALL,

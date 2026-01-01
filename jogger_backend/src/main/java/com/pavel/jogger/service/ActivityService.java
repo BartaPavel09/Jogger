@@ -10,6 +10,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Service class for managing jogging activities.
+ * <p>
+ * This class handles the business logic for creating, updating, retrieving, and deleting runs.
+ * It also automatically triggers badge evaluation whenever a new activity is added.
+ * </p>
+ */
 @Service
 public class ActivityService {
 
@@ -25,7 +32,17 @@ public class ActivityService {
         this.badgeService = badgeService;
     }
 
-    
+    /**
+     * Creates and saves a new activity for a specific runner.
+     * @param runnerId    The ID of the user performing the activity.
+     * @param distanceKm  Distance run in kilometers.
+     * @param durationSec Duration of the run in seconds.
+     * @param date        The date of the run.
+     * @param route       Optional description of the route taken.
+     * @param calories    Calories burned. If null, they are calculated automatically.
+     * @return The saved ActivityEntity.
+     * @throws NotFoundException If the runnerId does not exist.
+     */
     public ActivityEntity addActivity(
             Long runnerId,
             double distanceKm,
@@ -55,23 +72,40 @@ public class ActivityService {
 
         return saved;
     }
+
+    /**
+     * Estimates calories burned based on distance and weight.
+     * Formula approximation: Distance(km) * Weight(kg) * 1.036
+     * @param distanceKm   Distance run.
+     * @param runnerWeight User's weight (defaults to 70kg if not set).
+     * @return Estimated calories as an integer.
+     */
     private int estimateCalories(double distanceKm, Double runnerWeight) {
         double weight = (runnerWeight != null) ? runnerWeight : 70.0;
 
         return (int) Math.round(distanceKm * weight * 1.036);
     }
 
-    
+    /**
+     * Retrieves a single activity by ID.
+     * @throws NotFoundException If the activity doesn't exist.
+     */
     public ActivityEntity getActivityById(Long activityId) {
         return activityRepository.findById(activityId)
                 .orElseThrow(() -> new NotFoundException("Activity not found"));
     }
 
+    /**
+     * Returns all activities for a specific runner.
+     */
     public List<ActivityEntity> getActivitiesForRunner(Long runnerId) {
         return activityRepository.findByRunnerId(runnerId);
     }
 
-    
+    /**
+     * Updates an existing activity.
+     * Recalculates calories if distance or weight logic changes.
+     */
     public ActivityEntity updateActivity(
             Long activityId,
             double distanceKm,
@@ -94,7 +128,10 @@ public class ActivityService {
         return activityRepository.save(activity);
     }
 
-    
+    /**
+     * Deletes an activity based on it's ID
+     * @param activityId The ID of an Activity
+     */
     public void deleteActivity(Long activityId) {
         ActivityEntity activity = getActivityById(activityId);
         activityRepository.delete(activity);

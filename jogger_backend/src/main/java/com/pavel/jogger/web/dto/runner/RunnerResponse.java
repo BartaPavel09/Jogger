@@ -2,6 +2,13 @@ package com.pavel.jogger.web.dto.runner;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data Transfer Object (DTO) representing the public profile of a runner.
+ * <p>
+ * This object is returned to the frontend when user details are requested.
+ * Crucially, it excludes sensitive information like password hashes.
+ * </p>
+ */
 public class RunnerResponse {
 
     private Long id;

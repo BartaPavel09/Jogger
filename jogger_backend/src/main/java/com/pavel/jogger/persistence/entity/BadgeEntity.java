@@ -4,6 +4,14 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing an achievement unlocked by the user.
+ * <p>
+ * Maps to the "badges" table.
+ * <b>Constraint:</b> The <code>@UniqueConstraint</code> ensures that a user cannot receive
+ * the same badge code twice (e.g., you can't get "FIRST_5K" two times).
+ * </p>
+ */
 @Entity
 @Table(
         name = "badges",
@@ -15,6 +23,10 @@ public class BadgeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * A unique code identifying the type of badge.
+     * Used in the backend logic to check if a badge is already earned.
+     */
     @Column(nullable = false)
     private String code;
 

@@ -11,6 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST Controller for managing individual activity resources.
+ * <p>
+ * This controller handles endpoints that operate directly on a specific activity ID:
+ * {@code /activities/{activityId}}. It provides functionality for updating and deleting existing runs.
+ * </p>
+ */
 @RestController
 @RequestMapping("/activities")
 public class ActivitiesController {
@@ -23,7 +30,20 @@ public class ActivitiesController {
         this.accessService = accessService;
     }
 
-    
+    /**
+     * Updates the details of an existing activity.
+     * <p>
+     * This method first retrieves the activity to identify its owner, then checks if the
+     * currently authenticated user has permission to modify it.
+     * </p>
+     * @param activityId     The unique ID of the activity to update.
+     * @param request        The {@link UpdateActivityRequest} DTO containing the new values.
+     * Only fields provided in the DTO will be considered (e.g. date cannot be changed here).
+     * @param authentication The security context of the current user.
+     * @return The updated {@link ActivityResponse} reflecting the changes.
+     * @throws com.pavel.jogger.web.exception.NotFoundException  If the activity ID does not exist.
+     * @throws com.pavel.jogger.web.exception.ForbiddenException If the user does not own this activity.
+     */
     @PutMapping("/{activityId}")
     public ActivityResponse updateActivity(
             @PathVariable Long activityId,
@@ -46,7 +66,18 @@ public class ActivitiesController {
         );
     }
 
-    
+    /**
+     * Deletes a specific activity permanently.
+     * <p>
+     * Similar to update, it verifies ownership before deletion.
+     * returns HTTP 204 No Content upon success.
+     * </p>
+     * @param activityId     The unique ID of the activity to delete.
+     * @param authentication The security context of the current user.
+     * @return A {@link ResponseEntity} with status 204 (No Content) and no body.
+     * @throws com.pavel.jogger.web.exception.NotFoundException  If the activity ID does not exist.
+     * @throws com.pavel.jogger.web.exception.ForbiddenException If the user does not own this activity.
+     */
     @DeleteMapping("/{activityId}")
     public ResponseEntity<Void> deleteActivity(
             @PathVariable Long activityId,

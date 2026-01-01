@@ -4,6 +4,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
+/**
+ * DTO for updating an existing runner's profile.
+ * <p>
+ * This class captures the input from the "Edit Profile" screen.
+ * It enforces validation rules to ensure data integrity (e.g., valid email format).
+ * Note: Username is usually not changeable to maintain ID consistency.
+ * </p>
+ */
 public class UpdateRunnerRequest {
 
     @NotBlank(message = "Email is required")

@@ -38,7 +38,7 @@ public class AuthController {
      * Accepts a POST request with user details, creates a new account,
      * and returns a JWT token for immediate access.
      * </p>
-     * @param request The data transfer object (DTO) containing username, email, and password.
+     * @param req The data transfer object (DTO) containing username, email, and password.
      * Mapped automatically from the JSON body of the request.
      * @return A ResponseEntity containing the JWT token wrapped in an AuthResponse object.
      */
@@ -52,7 +52,7 @@ public class AuthController {
      * <p>
      * Accepts a POST request with credentials, verifies them, and returns a JWT token.
      * </p>
-     * @param request The DTO containing the username and password provided by the user.
+     * @param req The DTO containing the username and password provided by the user.
      * @return A ResponseEntity containing the JWT token if credentials are valid.
      */
     @PostMapping("/login")

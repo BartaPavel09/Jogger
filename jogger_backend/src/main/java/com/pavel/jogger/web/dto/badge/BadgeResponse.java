@@ -2,6 +2,12 @@ package com.pavel.jogger.web.dto.badge;
 
 import java.time.LocalDate;
 
+/**
+ * DTO representing a badge to be displayed in the UI.
+ * <p>
+ * Contains all necessary details for the badges in the profile screen in the mobile app.
+ * </p>
+ */
 public class BadgeResponse {
 
     private String title;

@@ -16,7 +16,6 @@ public class AsyncConfig {
      * using a thread from this specific pool. This isolates badge processing from
      * other application parts.
      * </p>
-     *
      * @return The configured Executor specifically for badge tasks.
      */
     @Bean(name = "badgeExecutor")
