@@ -3,12 +3,12 @@ import '../services/api_service.dart';
 import '../models/user.dart';
 import '../models/activity.dart';
 import 'add_activity_screen.dart';
-import 'login_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/activity_chart.dart';
 import '../widgets/calories_chart.dart';
 import '../widgets/weekly_chart.dart';
 import '../models/chart_data.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,10 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
         final activities = await _apiService.getActivities(user.id);
         final weekly = await _apiService.getWeeklyRuns(user.id);
 
+        activities.sort((a, b) => b.date.compareTo(a.date));
+
         if (mounted) {
           setState(() {
             _currentUser = user;
-            _activities = activities.reversed.toList();
+            _activities = activities;
             _weeklyData = weekly;
             _isLoading = false;
           });
@@ -57,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _checkNewBadges(int userId) async {
     try {
       final badges = await _apiService.getBadges(userId);
-
       final newBadges = badges.where((b) => !b.isSeen).toList();
 
       if (newBadges.isNotEmpty && mounted) {
@@ -87,7 +88,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         }
-
         await _apiService.markBadgesAsSeen(userId);
       }
     } catch (e) {
@@ -195,27 +195,55 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _navigateToAdd() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AddActivityScreen()),
+    );
+    if (result == true) _loadData();
+  }
+
+  void _navigateToProfile() {
+    if (_currentUser != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => ProfileScreen(user: _currentUser!)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Welcome, ${_currentUser?.username ?? 'Runner'}"),
-        backgroundColor: Color(0xFF1976D2),
+        title: const Text("Jogger"),
+        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await _apiService.logout();
-              if (mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
-              }
-            },
+            icon: const Icon(Icons.add_circle_outline, size: 28),
+            tooltip: 'Add Activity',
+            onPressed: _navigateToAdd,
           ),
+          const SizedBox(width: 8),
+
+          GestureDetector(
+            onTap: _navigateToProfile,
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.white,
+              child: Text(
+                _currentUser?.username.substring(0, 1).toUpperCase() ?? "U",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
         ],
       ),
+
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -224,20 +252,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   if (_activities.isNotEmpty) ...[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        "Performance Charts (Swipe)",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    const Text(
+                      "Your Progress",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 10),
-
                     AspectRatio(
-                      aspectRatio: 1.1,
+                      aspectRatio: 1.5,
                       child: PageView(
                         children: [
                           ActivityChart(activities: _activities),
@@ -246,63 +271,77 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
                   ],
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Recent Activities",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.person),
-                        label: const Text("Profile"),
-                        onPressed: () {
-                          if (_currentUser != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    ProfileScreen(user: _currentUser!),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                    ],
+                  const Text(
+                    "Recent Runs",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
 
                   if (_activities.isEmpty)
                     const Center(
                       child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text("No activities yet. Go for a run!"),
+                        padding: EdgeInsets.all(40),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.directions_run,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "No runs yet!",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Text(
+                              "Tap the + icon above to start.",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   else
-                    ..._activities.map(
-                      (activity) => Card(
+                    ..._activities.map((activity) {
+                      String formattedDate = DateFormat(
+                        'MMM dd, yyyy',
+                      ).format(activity.date);
+                      return Card(
+                        elevation: 2,
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: Colors.blueAccent,
-                            child: Text(
-                              activity.distanceKm.toStringAsFixed(1),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
+                            backgroundColor: Colors.blue.shade50,
+                            child: Icon(
+                              Icons.directions_run,
+                              color: Colors.blue,
                             ),
                           ),
-                          title: Text(activity.route ?? "Run"),
-                          subtitle: Text(
-                            "${activity.date.day}/${activity.date.month} • ${activity.durationSec ~/ 60} min • ${activity.calories} kcal",
+                          title: Text(
+                            activity.route ?? "Run",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${activity.distanceKm} km • ${activity.durationSec ~/ 60} min • ${activity.calories} kcal",
+                              ),
+                              Text(
+                                formattedDate,
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -310,36 +349,29 @@ class _HomeScreenState extends State<HomeScreen> {
                               IconButton(
                                 icon: const Icon(
                                   Icons.edit,
-                                  color: Colors.blue,
+                                  size: 20,
+                                  color: Colors.grey,
                                 ),
                                 onPressed: () => _editActivity(activity),
                               ),
-
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,
-                                  color: Colors.red,
+                                  size: 20,
+                                  color: Colors.redAccent,
                                 ),
                                 onPressed: () => _deleteActivity(activity.id),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
+
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddActivityScreen()),
-          );
-          if (result == true) _loadData();
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

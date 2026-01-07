@@ -227,7 +227,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const Divider(height: 40),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.logout),
+                label: const Text("Log Out"),
+                onPressed: () async {
+                  await _apiService.logout();
+                  if (mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  }
+                },
+              ),
+            ),
 
+            const SizedBox(height: 20),
             const Text(
               "Danger Zone",
               style: TextStyle(
