@@ -155,7 +155,6 @@ public class BadgeService {
     /**
      * Helper method to safely award a badge to a user.
      * <p>
-     * Crucial Feature: Idempotency.
      * Before saving, it checks if the user ALREADY has this badge code.
      * This prevents duplicate badges (e.g., getting "First 5K" every time you run 5K).
      * </p>

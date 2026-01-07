@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * Service class handling core authentication logic.
  * <p>
  * This class acts as the bridge between the API layer (Controllers) and the data/security layers.
- * It handles user registration (saving new users safely) and user login (verifying credentials).
+ * It handles user registration and user login.
  * </p>
  */
 @Service
@@ -32,7 +32,7 @@ public class AuthService {
     /**
      * Constructor injection for required dependencies.
      * @param runnerRepository      To access and save user data in the database.
-     * @param passwordEncoder       To hash passwords before saving them (security best practice).
+     * @param passwordEncoder       To hash passwords before saving them.
      * @param authenticationManager To verify username/password combinations during login.
      * @param jwtService            To generate the JWT token upon successful auth.
      */

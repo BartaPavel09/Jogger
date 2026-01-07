@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST Controller for generating and downloading document reports.
  * <p>
  * Unlike other controllers that return JSON data, this controller returns binary files (PDFs).
- * It is used for the "Export Data" functionality in the application.
+ * It is used for the PDF functionality in the application.
  * </p>
  */
 @RestController

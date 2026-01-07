@@ -53,7 +53,6 @@ public class ChartController {
     /**
      * Retrieves the volume of runs grouped by week number.
      * <p>
-     * Unlike a daily chart, this endpoint provides a broader view of consistency over the year.
      * It calls {@code chartService.getRunsPerWeek(id)} which groups dates by ISO Week Number.
      * <br>
      * <b>Example Response:</b> [{"label": "W10", "value": 3.0}, {"label": "W11", "value": 5.0}]

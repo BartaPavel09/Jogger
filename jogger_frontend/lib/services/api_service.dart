@@ -55,7 +55,15 @@ class ApiService {
         final errorData = jsonDecode(response.body);
 
         if (errorData['errors'] != null) {
-          return errorData['errors'].toString();
+          Map<String, dynamic> errors = errorData['errors'];
+
+          String cleanMessage = "";
+          errors.forEach((field, message) {
+            String fieldName = field[0].toUpperCase() + field.substring(1);
+            cleanMessage += "$fieldName: $message\n";
+          });
+
+          return cleanMessage.trim();
         }
         return errorData['message'] ?? 'Registration failed';
       } catch (_) {
