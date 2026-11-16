@@ -2,6 +2,8 @@ package com.pavel.jogger.persistence.repository;
 
 import com.pavel.jogger.persistence.entity.ActivityEntity;
 import com.pavel.jogger.persistence.entity.RunnerEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -79,4 +81,38 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Long> 
      */
     @Query("SELECT COALESCE(SUM(a.distanceKm), 0) FROM ActivityEntity a WHERE a.runner = :runner")
     Double sumDistanceByRunner(@Param("runner") RunnerEntity runner);
+
+    /**
+     * Retrieves paginated activities posted exclusively by runners that the given runner follows,
+     * ordered by newest date and id first.
+     */
+    @Query(
+        value = """
+            SELECT a FROM ActivityEntity a
+            JOIN FETCH a.runner r
+            WHERE r.id IN (
+                SELECT f.followed.id FROM UserFollowEntity f WHERE f.follower.id = :currentRunnerId
+            )
+            ORDER BY a.date DESC, a.id DESC
+        """,
+        countQuery = """
+            SELECT COUNT(a) FROM ActivityEntity a
+            WHERE a.runner.id IN (
+                SELECT f.followed.id FROM UserFollowEntity f WHERE f.follower.id = :currentRunnerId
+            )
+        """
+    )
+    Page<ActivityEntity> findFriendsFeed(@Param("currentRunnerId") Long currentRunnerId, Pageable pageable);
+
+    /**
+     * Computes the global distance leaderboard by aggregating cumulative distance per runner.
+     * Uses: SUM(distance) GROUP BY user_id ORDER BY total_distance DESC
+     */
+    @Query("""
+        SELECT a.runner.id AS runnerId, a.runner.username AS username, SUM(a.distanceKm) AS totalDistance, COUNT(a.id) AS totalRuns
+        FROM ActivityEntity a
+        GROUP BY a.runner.id, a.runner.username
+        ORDER BY SUM(a.distanceKm) DESC
+    """)
+    List<LeaderboardProjection> findGlobalLeaderboard();
 }

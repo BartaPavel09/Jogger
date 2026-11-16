@@ -31,6 +31,9 @@ public class ActivityMapper {
             pace = Math.round(pace * 100.0) / 100.0;
         }
 
+        Long runnerId = (entity.getRunner() != null) ? entity.getRunner().getId() : null;
+        String runnerUsername = (entity.getRunner() != null) ? entity.getRunner().getUsername() : null;
+
         return new ActivityResponse(
                 entity.getId(),
                 entity.getDistanceKm(),
@@ -38,7 +41,9 @@ public class ActivityMapper {
                 entity.getCalories(),
                 entity.getDate(),
                 entity.getRoute(),
-                pace
+                pace,
+                runnerId,
+                runnerUsername
         );
     }
 }

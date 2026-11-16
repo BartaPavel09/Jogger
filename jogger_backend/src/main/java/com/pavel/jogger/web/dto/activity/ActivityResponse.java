@@ -18,9 +18,17 @@ public class ActivityResponse {
     private LocalDate date;
     private String route;
     private double pace;
+    private Long runnerId;
+    private String runnerUsername;
 
     public ActivityResponse(Long id, double distanceKm, int durationSec,
                             int calories, LocalDate date, String route, double pace) {
+        this(id, distanceKm, durationSec, calories, date, route, pace, null, null);
+    }
+
+    public ActivityResponse(Long id, double distanceKm, int durationSec,
+                            int calories, LocalDate date, String route, double pace,
+                            Long runnerId, String runnerUsername) {
         this.id = id;
         this.distanceKm = distanceKm;
         this.durationSec = durationSec;
@@ -28,6 +36,8 @@ public class ActivityResponse {
         this.date = date;
         this.route = route;
         this.pace = pace;
+        this.runnerId = runnerId;
+        this.runnerUsername = runnerUsername;
     }
 
     public Long getId() { return id; }
@@ -37,4 +47,6 @@ public class ActivityResponse {
     public LocalDate getDate() { return date; }
     public String getRoute() { return route; }
     public double getPace() { return pace; }
+    public Long getRunnerId() { return runnerId; }
+    public String getRunnerUsername() { return runnerUsername; }
 }
