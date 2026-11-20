@@ -6,6 +6,8 @@ class Activity {
   final DateTime date;
   final String? route;
   final double pace;
+  final int? runnerId;
+  final String? runnerUsername;
 
   Activity({
     required this.id,
@@ -15,23 +17,30 @@ class Activity {
     required this.date,
     this.route,
     required this.pace,
+    this.runnerId,
+    this.runnerUsername,
   });
 
   factory Activity.fromJson(Map<String, dynamic> json) {
     return Activity(
       id: json['id'],
-
       distanceKm: (json['distanceKm'] as num).toDouble(),
       durationSec: json['durationSec'],
       calories: json['calories'],
       date: DateTime.parse(json['date']),
       route: json['route'],
       pace: (json['pace'] as num).toDouble(),
+      runnerId: json['runnerId'],
+      runnerUsername: json['runnerUsername'] ?? json['username'],
     );
   }
 
   String get durationFormatted {
     final minutes = durationSec ~/ 60;
     return '$minutes min';
+  }
+
+  String get paceFormatted {
+    return '$pace min/km';
   }
 }

@@ -5,6 +5,8 @@ import '../models/user.dart';
 import '../models/activity.dart';
 import '../models/chart_data.dart';
 import '../models/badge_model.dart';
+import '../models/search_user.dart';
+import '../models/leaderboard_entry.dart';
 
 class ApiService {
   static const String baseUrl = 'http://localhost:8080';
@@ -267,6 +269,70 @@ class ApiService {
       return body.map((json) => ChartData.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load weekly stats');
+    }
+  }
+
+  Future<bool> followUser(int runnerId) async {
+    final url = Uri.parse('$baseUrl/runners/$runnerId/follow');
+    final headers = await _getHeaders();
+    final response = await http.post(url, headers: headers);
+    return response.statusCode == 200 || response.statusCode == 201;
+  }
+
+  Future<bool> unfollowUser(int runnerId) async {
+    final url = Uri.parse('$baseUrl/runners/$runnerId/follow');
+    final headers = await _getHeaders();
+    final response = await http.delete(url, headers: headers);
+    return response.statusCode == 200 || response.statusCode == 204;
+  }
+
+  Future<List<SearchUser>> searchRunners([String? query]) async {
+    final hasQuery = query != null && query.trim().isNotEmpty;
+    final uri = Uri.parse('$baseUrl/runners/search').replace(
+      queryParameters: hasQuery ? {'query': query.trim()} : null,
+    );
+    final headers = await _getHeaders();
+    final response = await http.get(uri, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> body = jsonDecode(response.body);
+      return body.map((json) => SearchUser.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search runners');
+    }
+  }
+
+  Future<List<Activity>> getFriendsFeed({int page = 0, int size = 20}) async {
+    final url = Uri.parse('$baseUrl/activities/feed?page=$page&size=$size');
+    final headers = await _getHeaders();
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final dynamic decoded = jsonDecode(response.body);
+      List<dynamic> list;
+      if (decoded is Map<String, dynamic> && decoded.containsKey('content')) {
+        list = decoded['content'] as List<dynamic>;
+      } else if (decoded is List<dynamic>) {
+        list = decoded;
+      } else {
+        list = [];
+      }
+      return list.map((json) => Activity.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load friends feed');
+    }
+  }
+
+  Future<List<LeaderboardEntry>> getLeaderboard() async {
+    final url = Uri.parse('$baseUrl/runners/leaderboard');
+    final headers = await _getHeaders();
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> body = jsonDecode(response.body);
+      return body.map((json) => LeaderboardEntry.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load leaderboard');
     }
   }
 }
