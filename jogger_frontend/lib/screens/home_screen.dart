@@ -4,6 +4,9 @@ import '../models/user.dart';
 import '../models/activity.dart';
 import 'add_activity_screen.dart';
 import 'profile_screen.dart';
+import 'feed_screen.dart';
+import 'leaderboard_screen.dart';
+import 'discover_screen.dart';
 import '../widgets/activity_chart.dart';
 import '../widgets/calories_chart.dart';
 import '../widgets/weekly_chart.dart';
@@ -23,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Activity> _activities = [];
   List<ChartData> _weeklyData = [];
   bool _isLoading = true;
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -212,18 +216,180 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _getTitle() {
+    switch (_currentIndex) {
+      case 1:
+        return "Friends Feed";
+      case 2:
+        return "Leaderboard";
+      case 3:
+        return "Discover Runners";
+      default:
+        return "Jogger";
+    }
+  }
+
+  Widget _buildBody() {
+    switch (_currentIndex) {
+      case 1:
+        return FeedScreen(
+          onDiscoverTap: () => setState(() => _currentIndex = 3),
+        );
+      case 2:
+        return LeaderboardScreen(currentUserId: _currentUser?.id);
+      case 3:
+        return const DiscoverScreen();
+      default:
+        return _buildRunsTab();
+    }
+  }
+
+  Widget _buildRunsTab() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (_activities.isNotEmpty) ...[
+            const Text(
+              "Your Progress",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 10),
+            AspectRatio(
+              aspectRatio: 1.5,
+              child: PageView(
+                children: [
+                  ActivityChart(activities: _activities),
+                  CaloriesChart(activities: _activities),
+                  WeeklyChart(weeklyData: _weeklyData),
+                ],
+              ),
+            ),
+            const SizedBox(height: 25),
+          ],
+
+          const Text(
+            "Recent Runs",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+
+          if (_activities.isEmpty)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(40),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.directions_run,
+                      size: 60,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "No runs yet!",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Text(
+                      "Tap the + icon above to start.",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ..._activities.map((activity) {
+              String formattedDate = DateFormat(
+                'MMM dd, yyyy',
+              ).format(activity.date);
+              return Card(
+                elevation: 2,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blue.shade50,
+                    child: Icon(
+                      Icons.directions_run,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  title: Text(
+                    activity.route ?? "Run",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${activity.distanceKm} km • ${activity.durationSec ~/ 60} min • ${activity.calories} kcal",
+                      ),
+                      Text(
+                        formattedDate,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () => _editActivity(activity),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          size: 20,
+                          color: Colors.redAccent,
+                        ),
+                        onPressed: () => _deleteActivity(activity.id),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Jogger"),
+        title: Text(_getTitle()),
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline, size: 28),
-            tooltip: 'Add Activity',
-            onPressed: _navigateToAdd,
-          ),
+          if (_currentIndex == 0)
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline, size: 28),
+              tooltip: 'Add Activity',
+              onPressed: _navigateToAdd,
+            ),
           const SizedBox(width: 8),
 
           GestureDetector(
@@ -244,134 +410,33 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadData,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  if (_activities.isNotEmpty) ...[
-                    const Text(
-                      "Your Progress",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    AspectRatio(
-                      aspectRatio: 1.5,
-                      child: PageView(
-                        children: [
-                          ActivityChart(activities: _activities),
-                          CaloriesChart(activities: _activities),
-                          WeeklyChart(weeklyData: _weeklyData),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 25),
-                  ],
+      body: _buildBody(),
 
-                  const Text(
-                    "Recent Runs",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-
-                  if (_activities.isEmpty)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(40),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.directions_run,
-                              size: 60,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              "No runs yet!",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              "Tap the + icon above to start.",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else
-                    ..._activities.map((activity) {
-                      String formattedDate = DateFormat(
-                        'MMM dd, yyyy',
-                      ).format(activity.date);
-                      return Card(
-                        elevation: 2,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.blue.shade50,
-                            child: Icon(
-                              Icons.directions_run,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          title: Text(
-                            activity.route ?? "Run",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${activity.distanceKm} km • ${activity.durationSec ~/ 60} min • ${activity.calories} kcal",
-                              ),
-                              Text(
-                                formattedDate,
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  size: 20,
-                                  color: Colors.grey,
-                                ),
-                                onPressed: () => _editActivity(activity),
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  size: 20,
-                                  color: Colors.redAccent,
-                                ),
-                                onPressed: () => _deleteActivity(activity.id),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_run),
+            label: "My Runs",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dynamic_feed),
+            label: "Feed",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.emoji_events),
+            label: "Leaderboard",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_search),
+            label: "Discover",
+          ),
+        ],
+      ),
     );
   }
 }
