@@ -44,10 +44,10 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Long> 
     /**
      * Calculates the total distance run by a user using a custom JPQL query.
      * @param runnerId The ID of the user.
-     * @return The sum of distanceKm for all activities of this runner. Can be null if no runs exist.
+     * @return The sum of distanceKm for all activities of this runner, or 0.0 if no runs exist.
      */
     @Query("""
-        SELECT SUM(a.distanceKm)
+        SELECT COALESCE(SUM(a.distanceKm), 0.0)
         FROM ActivityEntity a
         WHERE a.runner.id = :runnerId
     """)
@@ -68,19 +68,6 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Long> 
         WHERE a.runner.id = :runnerId
     """)
     Long totalActivities(@Param("runnerId") Long runnerId);
-
-    /**
-     * Calculates total distance ensuring a non-null result.
-     * <p>
-     * COALESCE is a SQL function that returns the first non-null value.
-     * If SUM returns null (user has 0 runs), this returns 0 instead.
-     * This is safer than 'totalDistance' above which might return null.
-     * </p>
-     * @param runner The runner entity.
-     * @return The total distance or 0.0 if no runs found.
-     */
-    @Query("SELECT COALESCE(SUM(a.distanceKm), 0) FROM ActivityEntity a WHERE a.runner = :runner")
-    Double sumDistanceByRunner(@Param("runner") RunnerEntity runner);
 
     /**
      * Retrieves paginated activities posted exclusively by runners that the given runner follows,

@@ -52,7 +52,7 @@ public class JwtService {
 
     /**
      * Generates a new JWT token for a user.
-     * @param username The user's identifier (usually email).
+     * @param username The user's username.
      * @param role     The user's role (e.g., "USER", "ADMIN").
      * @return A String representing the signed JWT token.
      */

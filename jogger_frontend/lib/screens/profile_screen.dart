@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../services/api_service.dart';
 import '../models/user.dart';
 import '../models/badge_model.dart';
+import '../models/chart_data.dart';
 import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _weightController = TextEditingController();
 
   List<BadgeModel> _badges = [];
+  List<ChartData> _stats = [];
   bool _isLoading = false;
 
   @override
@@ -29,6 +31,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _weightController.text = widget.user.weight.toString();
     }
     _loadBadges();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final stats = await _apiService.getStats(widget.user.id);
+      if (mounted) {
+        setState(() => _stats = stats);
+      }
+    } catch (_) {}
   }
 
   Future<void> _loadBadges() async {
@@ -110,6 +122,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     widget.user.email,
                     style: const TextStyle(color: Colors.grey),
                   ),
+                  if (_stats.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: _stats.map((s) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Column(
+                          children: [
+                            Text(
+                              s.label == "Total km"
+                                  ? "${s.value.toStringAsFixed(1)} km"
+                                  : "${s.value.toInt()}",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
+                            Text(
+                              s.label,
+                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      )).toList(),
+                    ),
+                  ],
                 ],
               ),
             ),

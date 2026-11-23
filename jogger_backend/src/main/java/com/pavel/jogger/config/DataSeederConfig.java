@@ -43,13 +43,13 @@ public class DataSeederConfig {
             String passwordHash = passwordEncoder.encode(rawPassword);
 
             RunnerEntity admin = new RunnerEntity("admin", "admin@jogger.com", passwordHash);
-            admin.setRole("ROLE_ADMIN");
+            admin.setRole("ADMIN");
             admin.setWeight(75.0);
             admin.setDateJoined(LocalDateTime.now().minusMonths(3));
             runnerRepository.save(admin);
 
             RunnerEntity alex = new RunnerEntity("alex_marathon", "alex@jogger.com", passwordHash);
-            alex.setRole("ROLE_USER");
+            alex.setRole("USER");
             alex.setWeight(68.0);
             alex.setDateJoined(LocalDateTime.now().minusMonths(2));
             alex = runnerRepository.save(alex);
@@ -61,7 +61,7 @@ public class DataSeederConfig {
             createActivity(activityRepository, alex, 14.9, 4400, LocalDate.now().minusDays(1), "Evening City Loop", 1040);
 
             RunnerEntity sarah = new RunnerEntity("sarah_runs", "sarah@jogger.com", passwordHash);
-            sarah.setRole("ROLE_USER");
+            sarah.setRole("USER");
             sarah.setWeight(58.0);
             sarah.setDateJoined(LocalDateTime.now().minusMonths(2));
             sarah = runnerRepository.save(sarah);
@@ -73,7 +73,7 @@ public class DataSeederConfig {
             createActivity(activityRepository, sarah, 7.5, 2475, LocalDate.now().minusDays(2), "Quick Park Interval", 450);
 
             RunnerEntity david = new RunnerEntity("david_pace", "david@jogger.com", passwordHash);
-            david.setRole("ROLE_USER");
+            david.setRole("USER");
             david.setWeight(74.0);
             david.setDateJoined(LocalDateTime.now().minusMonths(1));
             david = runnerRepository.save(david);
@@ -83,7 +83,7 @@ public class DataSeederConfig {
             createActivity(activityRepository, david, 10.0, 3300, LocalDate.now().minusDays(3), "Campus 10K", 770);
 
             RunnerEntity demo = new RunnerEntity("demo_runner", "demo@jogger.com", passwordHash);
-            demo.setRole("ROLE_USER");
+            demo.setRole("USER");
             demo.setWeight(70.0);
             demo.setDateJoined(LocalDateTime.now().minusDays(10));
             demo = runnerRepository.save(demo);

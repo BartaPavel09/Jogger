@@ -106,11 +106,11 @@ CREATE TABLE `user_follows` (
 LOCK TABLES `runners` WRITE;
 /*!40000 ALTER TABLE `runners` DISABLE KEYS */;
 INSERT INTO `runners` (`id`, `username`, `email`, `password_hash`, `role`, `weight`, `date_joined`) VALUES
-(1, 'admin', 'admin@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'ROLE_ADMIN', 75.0, '2026-01-01 10:00:00'),
-(2, 'alex_marathon', 'alex@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'ROLE_USER', 68.0, '2026-02-10 09:30:00'),
-(3, 'sarah_runs', 'sarah@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'ROLE_USER', 58.0, '2026-02-15 11:15:00'),
-(4, 'david_pace', 'david@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'ROLE_USER', 74.0, '2026-03-01 14:00:00'),
-(5, 'demo_runner', 'demo@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'ROLE_USER', 70.0, '2026-03-15 16:20:00');
+(1, 'admin', 'admin@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'ADMIN', 75.0, '2026-01-01 10:00:00'),
+(2, 'alex_marathon', 'alex@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'USER', 68.0, '2026-02-10 09:30:00'),
+(3, 'sarah_runs', 'sarah@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'USER', 58.0, '2026-02-15 11:15:00'),
+(4, 'david_pace', 'david@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'USER', 74.0, '2026-03-01 14:00:00'),
+(5, 'demo_runner', 'demo@jogger.com', '$2a$10$gtNvuRxihC0zd6yfCkDr1.hgHQ7nZYVtJLsxFBgA5WuyL9n2d3gZC', 'USER', 70.0, '2026-03-15 16:20:00');
 /*!40000 ALTER TABLE `runners` ENABLE KEYS */;
 UNLOCK TABLES;
 

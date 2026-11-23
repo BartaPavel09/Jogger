@@ -48,16 +48,6 @@ public class FollowController {
     }
 
     /**
-     * Unfollows a runner via POST (convenience endpoint for clients that prefer POST).
-     */
-    @PostMapping("/runners/{id}/unfollow")
-    public ResponseEntity<Void> unfollowUserPost(@PathVariable Long id, Authentication authentication) {
-        RunnerEntity current = accessService.currentRunner(authentication);
-        followService.unfollow(current.getId(), id);
-        return ResponseEntity.ok().build();
-    }
-
-    /**
      * Searches runners by username and returns results along with follow status.
      */
     @GetMapping("/runners/search")

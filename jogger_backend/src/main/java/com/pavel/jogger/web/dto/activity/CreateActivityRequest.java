@@ -2,6 +2,7 @@ package com.pavel.jogger.web.dto.activity;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDate;
 
@@ -26,6 +27,7 @@ public class CreateActivityRequest {
 
     private String route;
 
+    @PositiveOrZero(message = "Calories must be positive or zero")
     private Integer calories;
 
     public CreateActivityRequest() {}

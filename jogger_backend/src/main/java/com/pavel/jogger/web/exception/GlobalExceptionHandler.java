@@ -2,6 +2,7 @@ package com.pavel.jogger.web.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -92,6 +93,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ApiError(HttpStatus.BAD_REQUEST.value(), Map.of("message", ex.getMessage())),
                 HttpStatus.BAD_REQUEST
+        );
+    }
+
+    /**
+     * Handles Authentication Failure (401) e.g., bad credentials.
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException ex) {
+        return new ResponseEntity<>(
+                new ApiError(HttpStatus.UNAUTHORIZED.value(), Map.of("message", "Invalid username or password")),
+                HttpStatus.UNAUTHORIZED
         );
     }
 }

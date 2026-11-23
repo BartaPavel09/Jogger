@@ -2,9 +2,11 @@ package com.pavel.jogger.service;
 
 import com.pavel.jogger.persistence.entity.RunnerEntity;
 import com.pavel.jogger.persistence.repository.RunnerRepository;
+import com.pavel.jogger.persistence.repository.UserFollowRepository;
 import com.pavel.jogger.web.exception.ConflictException;
 import com.pavel.jogger.web.exception.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +22,11 @@ import java.util.Optional;
 public class RunnerService {
 
     private final RunnerRepository runnerRepository;
+    private final UserFollowRepository userFollowRepository;
 
-    public RunnerService(RunnerRepository runnerRepository) {
+    public RunnerService(RunnerRepository runnerRepository, UserFollowRepository userFollowRepository) {
         this.runnerRepository = runnerRepository;
+        this.userFollowRepository = userFollowRepository;
     }
 
     
@@ -72,12 +76,15 @@ public class RunnerService {
 
     /**
      * Permanently deletes a user account by the user id.
+     * Cleans up any user follow relationships before deleting the account.
      * @throws NotFoundException If the user does not exist.
      */
+    @Transactional
     public void deleteRunner(Long id) {
         if (!runnerRepository.existsById(id)) {
             throw new NotFoundException("Runner not found");
         }
+        userFollowRepository.deleteByFollowerIdOrFollowedId(id, id);
         runnerRepository.deleteById(id);
     }
 

@@ -14,7 +14,8 @@ import static org.mockito.Mockito.*;
 class RunnerServiceTest {
 
     private final RunnerRepository runnerRepository = mock(RunnerRepository.class);
-    private final RunnerService runnerService = new RunnerService(runnerRepository);
+    private final com.pavel.jogger.persistence.repository.UserFollowRepository userFollowRepository = mock(com.pavel.jogger.persistence.repository.UserFollowRepository.class);
+    private final RunnerService runnerService = new RunnerService(runnerRepository, userFollowRepository);
 
     @Test
     void getRunnerById_shouldReturnRunner() {

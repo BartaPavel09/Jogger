@@ -127,7 +127,7 @@ public class BadgeService {
      */
     private void checkTotalStats(RunnerEntity runner) {
         long totalRuns = activityRepository.countByRunner(runner);
-        Double totalDistance = activityRepository.sumDistanceByRunner(runner);
+        Double totalDistance = activityRepository.totalDistance(runner.getId());
 
         
         if (totalRuns >= 1) {

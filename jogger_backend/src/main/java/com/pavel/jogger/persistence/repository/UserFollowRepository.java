@@ -24,6 +24,8 @@ public interface UserFollowRepository extends JpaRepository<UserFollowEntity, Lo
 
     void deleteByFollowerAndFollowed(RunnerEntity follower, RunnerEntity followed);
 
+    void deleteByFollowerIdOrFollowedId(Long followerId, Long followedId);
+
     List<UserFollowEntity> findByFollower(RunnerEntity follower);
 
     List<UserFollowEntity> findByFollowerId(Long followerId);

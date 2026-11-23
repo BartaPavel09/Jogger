@@ -132,69 +132,98 @@ class _HomeScreenState extends State<HomeScreen> {
       text: (activity.durationSec / 60).toStringAsFixed(0),
     );
     final routeController = TextEditingController(text: activity.route ?? "");
+    DateTime selectedDate = activity.date;
 
     await showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Edit Activity"),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: distanceController,
-                decoration: const InputDecoration(labelText: "Distance (km)"),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: durationController,
-                decoration: const InputDecoration(labelText: "Duration (min)"),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: routeController,
-                decoration: const InputDecoration(labelText: "Route Name"),
-              ),
-            ],
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text("Edit Activity"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: distanceController,
+                  decoration: const InputDecoration(labelText: "Distance (km)"),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: durationController,
+                  decoration: const InputDecoration(labelText: "Duration (min)"),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: routeController,
+                  decoration: const InputDecoration(labelText: "Route Name"),
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Date: ${DateFormat('yyyy-MM-dd').format(selectedDate)}",
+                      ),
+                    ),
+                    TextButton.icon(
+                      icon: const Icon(Icons.calendar_today, size: 18),
+                      label: const Text("Change"),
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          setDialogState(() => selectedDate = picked);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                final dist = double.parse(distanceController.text);
-                final durMin = int.parse(durationController.text);
-                final route = routeController.text;
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  final dist = double.parse(distanceController.text);
+                  final durMin = int.parse(durationController.text);
+                  final route = routeController.text;
 
-                await _apiService.updateActivity(
-                  activity.id,
-                  dist,
-                  durMin * 60,
-                  route,
-                );
-
-                if (mounted) {
-                  Navigator.pop(ctx);
-                  _loadData();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Activity updated!")),
+                  await _apiService.updateActivity(
+                    activity.id,
+                    dist,
+                    durMin * 60,
+                    route,
+                    date: selectedDate,
                   );
+
+                  if (mounted) {
+                    Navigator.pop(ctx);
+                    _loadData();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Activity updated!")),
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text("Invalid input")));
                 }
-              } catch (e) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text("Invalid input")));
-              }
-            },
-            child: const Text("Save"),
-          ),
-        ],
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        ),
       ),
     );
   }

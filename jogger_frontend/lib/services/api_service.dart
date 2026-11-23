@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../models/activity.dart';
@@ -229,16 +230,22 @@ class ApiService {
     int activityId,
     double distance,
     int durationSec,
-    String route,
-  ) async {
+    String route, {
+    DateTime? date,
+  }) async {
     final url = Uri.parse('$baseUrl/activities/$activityId');
     final headers = await _getHeaders();
 
-    final body = jsonEncode({
+    final Map<String, dynamic> payload = {
       'distanceKm': distance,
       'durationSec': durationSec,
       'route': route,
-    });
+    };
+    if (date != null) {
+      payload['date'] = DateFormat('yyyy-MM-dd').format(date);
+    }
+
+    final body = jsonEncode(payload);
 
     final response = await http.put(url, headers: headers, body: body);
 
