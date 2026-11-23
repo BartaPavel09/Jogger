@@ -74,7 +74,7 @@ public class FollowController {
     /**
      * Retrieves the paginated friends activity feed of runs by followed runners.
      */
-    @GetMapping({"/activities/feed", "/feed"})
+    @GetMapping("/activities/feed")
     public ResponseEntity<Page<ActivityResponse>> getFriendsFeed(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

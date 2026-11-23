@@ -1,5 +1,6 @@
 package com.pavel.jogger.web.controller;
 
+import com.pavel.jogger.persistence.entity.RunnerEntity;
 import com.pavel.jogger.persistence.mapper.RunnerMapper;
 import com.pavel.jogger.service.AccessService;
 import com.pavel.jogger.service.RunnerService;
@@ -98,11 +99,8 @@ public class RunnerController {
      */
     @GetMapping("/me")
     public ResponseEntity<RunnerResponse> getMe(Authentication authentication) {
-        String username = authentication.getName();
-        return runnerService.getRunnerByUsername(username)
-                .map(RunnerMapper::toResponse)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        RunnerEntity current = accessService.currentRunner(authentication);
+        return ResponseEntity.ok(RunnerMapper.toResponse(current));
     }
 
     /**

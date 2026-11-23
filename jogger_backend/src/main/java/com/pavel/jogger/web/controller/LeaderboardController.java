@@ -23,7 +23,7 @@ public class LeaderboardController {
     /**
      * Retrieves the global distance leaderboard ranking all runners by cumulative kilometers.
      */
-    @GetMapping({"/runners/leaderboard", "/leaderboard"})
+    @GetMapping("/runners/leaderboard")
     public ResponseEntity<List<LeaderboardEntryResponse>> getLeaderboard() {
         return ResponseEntity.ok(leaderboardService.getGlobalLeaderboard());
     }

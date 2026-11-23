@@ -113,10 +113,25 @@ public class ActivityService {
             String route,
             Integer calories
     ) {
+        return updateActivity(activityId, distanceKm, durationSec, null, route, calories);
+    }
+
+    /**
+     * Updates an existing activity including date.
+     */
+    public ActivityEntity updateActivity(
+            Long activityId,
+            double distanceKm,
+            int durationSec,
+            LocalDate date,
+            String route,
+            Integer calories
+    ) {
         ActivityEntity activity = getActivityById(activityId);
 
         activity.setDistanceKm(distanceKm);
         activity.setDurationSec(durationSec);
+        if (date != null) activity.setDate(date);
         if (route != null) activity.setRoute(route);
 
         if (calories != null) {
